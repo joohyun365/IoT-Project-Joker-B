@@ -3,42 +3,80 @@
   "author": "Uri Shaked",
   "editor": "wokwi",
   "parts": [
+    { "type": "wokwi-breadboard-half", "id": "bb1", "top": 208.2, "left": -573.2, "attrs": {} },
     {
       "type": "board-esp32-devkit-c-v4",
       "id": "esp",
       "top": 96,
-      "left": -158.36,
+      "left": -129.56,
       "attrs": { "fastTLS": "1" }
     },
     {
       "type": "wokwi-ili9341",
       "id": "lcd1",
-      "top": 34.2,
-      "left": 88.1,
+      "top": 33.7,
+      "left": 116.4,
       "rotate": 90,
       "attrs": {}
     },
     {
-      "type": "wokwi-pushbutton",
-      "id": "btn1",
-      "top": 294.2,
-      "left": 144,
-      "attrs": { "color": "green", "label": "New joke" }
-    }
+      "type": "wokwi-lcd1602",
+      "id": "lcd2",
+      "top": -70.4,
+      "left": 53.6,
+      "attrs": { "pins": "i2c" }
+    },
+    {
+      "type": "wokwi-membrane-keypad",
+      "id": "keypad1",
+      "top": 387.6,
+      "left": -118,
+      "rotate": 180,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": 496.1,
+      "left": -293.3,
+      "rotate": 270,
+      "attrs": {}
+    },
+    { "type": "wokwi-servo", "id": "servo1", "top": 122.8, "left": 422.4, "attrs": {} },
+    { "type": "wokwi-servo", "id": "servo2", "top": 36.4, "left": -556.8, "attrs": {} },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": -45.6,
+      "left": -219,
+      "attrs": { "volume": "0.1" }
+    },
+    { "type": "wokwi-mpu6050", "id": "imu1", "top": -34.58, "left": -93.68, "attrs": {} }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
-    [ "lcd1:GND", "esp:GND.2", "black", [ "h-19.2", "v91.54" ] ],
     [ "lcd1:RST", "esp:4", "purple", [ "h-48", "v67.2" ] ],
     [ "lcd1:D/C", "esp:2", "#8f4814", [ "h-28.8", "v44.14" ] ],
     [ "lcd1:SCK", "esp:18", "gray", [ "v-0.01", "h-48", "v-19.2" ] ],
     [ "lcd1:MISO", "esp:19", "orange", [ "h-67.2", "v-9.61", "h0", "v-19.2" ] ],
     [ "lcd1:MOSI", "esp:23", "green", [ "h-38.4", "v-67.31" ] ],
-    [ "esp:5V", "lcd1:VCC", "red", [ "h-21.83", "v-206.3", "h201.6", "v48.5" ] ],
     [ "lcd1:CS", "esp:15", "violet", [ "h-57.6", "v105.6" ] ],
-    [ "esp:GND.2", "btn1:2.l", "black", [ "h76.8", "v201.4" ] ],
-    [ "esp:5", "btn1:1.l", "green", [ "h19.2", "v96" ] ]
+    [ "bb1:tp.24", "lcd1:VCC", "red", [ "v-143.7", "h270.9" ] ],
+    [ "esp:5V", "bb1:tp.25", "red", [ "h-43.05", "v-76.8", "h-102.4" ] ],
+    [ "bb1:tn.25", "esp:GND.2", "black", [ "h40", "v-144.1", "h124.8" ] ],
+    [ "lcd1:GND", "bb1:tn.23", "black", [ "h-19.7", "v-96.5", "h-260.8" ] ],
+    [ "esp:3V3", "ldr1:VCC", "green", [ "h0" ] ],
+    [ "keypad1:R1", "esp:27", "#8f4814", [ "v-76.8", "h-182.4", "v-96" ] ],
+    [ "keypad1:R3", "esp:25", "#8f4814", [ "v-67.2", "h-172.5", "v-124.8" ] ],
+    [ "keypad1:R4", "esp:33", "#8f4814", [ "v-62.4", "h-167.8", "v-139.2" ] ],
+    [ "keypad1:C1", "esp:32", "orange", [ "v-57.6", "h-163.1", "v-153.6" ] ],
+    [ "keypad1:C2", "esp:17", "orange", [ "v0" ] ],
+    [ "keypad1:R2", "esp:26", "#8f4814", [ "v-72", "h-177.2", "v-110.4" ] ],
+    [ "keypad1:C3", "esp:16", "orange", [ "v0" ] ],
+    [ "esp:35", "keypad1:C4", "orange", [ "h-33.45", "v168", "h138.9" ] ],
+    [ "ldr1:GND", "bb1:tn.22", "black", [ "v-201.6", "h-86.8" ] ],
+    [ "ldr1:DO", "esp:34", "green", [ "v0" ] ]
   ],
   "dependencies": {}
 }
