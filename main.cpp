@@ -1,6 +1,5 @@
 /*
   ESP32 HTTPClient Jokes API Example
-  - 최종 통합 버전 (키패드 카테고리 선택 및 평가 상태 관리) -
 
   https://wokwi.com/projects/342032431249883731
   Copyright (C) 2022, Uri Shaked
