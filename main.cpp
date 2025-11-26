@@ -1,9 +1,6 @@
 /*
-  ESP32 HTTPClient Jokes API Example
-
-  https://wokwi.com/projects/342032431249883731
-  Copyright (C) 2022, Uri Shaked
-  Modified by Gemini for user project
+  Joke Machine Final Version
+  Flow: Fetch Joke -> Send to Make(Get Translation) -> Show Both -> Wait for Rating -> Send Rating
 */
 
 #include <WiFi.h>
@@ -16,200 +13,184 @@
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
-// --- TFT 핀 설정 (기존 Joke Machine 핀 기준) ---
-// 사용 중인 핀: 2, 4, 5, 15, 18, 19, 23 (SPI 핀 포함)
+// [설정] Make.com Webhook URL (그대로 두세요)
+String MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/jw98d8tt874wvaevnt151jl2el7co05s"; 
+
 #define TFT_DC 2
 #define TFT_CS 15
 #define TFT_RST 4
-// Hardware SPI (18, 19, 23)는 라이브러리가 자동으로 사용합니다.
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
 
-
-// --- 키패드 핀 설정 ---
-const byte ROWS = 4; // 4 rows
-const byte COLS = 4; // 4 columns
-char keys[ROWS][COLS] = {
-  {'1', '2', '3', 'A'},
-  {'4', '5', '6', 'B'},
-  {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
-};
-// Rows: 27, 26, 25, 33
-// Cols: 32, 17, 16, 35
-byte rowPins[ROWS] = {27, 26, 25, 33};
-byte colPins[COLS] = {32, 17, 16, 35};
+const byte ROWS = 4; const byte COLS = 4;
+char keys[ROWS][COLS] = { {'1','2','3','A'}, {'4','5','6','B'}, {'7','8','9','C'}, {'*','0','#','D'} };
+byte rowPins[ROWS] = {27, 26, 25, 33}; byte colPins[COLS] = {32, 17, 16, 22};
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
+const int BUZZER_PIN = 14; 
+enum MachineState { STATE_MENU, STATE_RATING };
+MachineState currentState = STATE_MENU; 
 
-// --- 기계의 현재 상태를 정의 ---
-enum MachineState {
-  STATE_MENU,   // 카테고리 선택 대기 중
-  STATE_RATING  // 농담 평가 대기 중
-};
-MachineState currentState = STATE_MENU; // 시작은 메뉴 상태
+// 데이터 보존용 변수
+String currentJoke = "";
+String currentCategory = "";
+String currentKorean = ""; // 번역된 한글 저장용
 
+void beep(int f, int d, int p) { tone(BUZZER_PIN, f); delay(d); noTone(BUZZER_PIN); delay(p); }
 
-// URL을 동적으로 생성합니다.
-
-
-// getJoke 함수가 'category'를 인자로 받도록
+// 1. 영어 농담 가져오기 (JokeAPI)
 String getJoke(String category) {
   HTTPClient http;
   http.useHTTP10(true);
-
-  // 카테고리를 포함한 URL을 동적으로 생성
-  String url = "https://v2.jokeapi.dev/joke/" + category;
-  http.begin(url);
-
-  http.GET();
-  String result = http.getString();
-
+  http.begin("https://v2.jokeapi.dev/joke/" + category);
+  int code = http.GET();
+  String result = (code > 0) ? http.getString() : "Error";
+  http.end();
+  
   DynamicJsonDocument doc(2048);
-  DeserializationError error = deserializeJson(doc, result);
-
-  // Test if parsing succeeds.
-  if (error) {
-    Serial.print("deserializeJson() failed: ");
-    Serial.println(error.c_str());
-    return "<error>";
-  }
-
+  deserializeJson(doc, result);
   String type = doc["type"].as<String>();
   String joke = doc["joke"].as<String>();
   String setup = doc["setup"].as<String>();
   String delivery = doc["delivery"].as<String>();
+  return type.equals("single") ? joke : setup + "\n" + delivery;
+}
+
+// 2. Make.com과 통신하는 함수 (번역 요청 or 평점 전송)
+// rating이 0이면 '번역 요청용', 1~5면 '평가 전송용'
+String sendToMake(String category, String joke, int rating) {
+  if(WiFi.status() != WL_CONNECTED) return "WiFi Error";
+
+  WiFiClientSecure client;
+  client.setInsecure();
+  HTTPClient http;
+  
+  http.begin(client, MAKE_WEBHOOK_URL);
+  http.addHeader("Content-Type", "application/json");
+
+  StaticJsonDocument<512> doc;
+  doc["category"] = category;
+  doc["joke"] = joke;
+  doc["rating"] = rating; // 0 또는 실제 점수
+
+  String jsonPayload;
+  serializeJson(doc, jsonPayload);
+
+  int httpCode = http.POST(jsonPayload);
+  String response = "Error";
+
+  if (httpCode > 0) {
+    response = http.getString(); // Make.com이 보내준 번역 결과
+  } else {
+    Serial.printf("Make.com Error: %s\n", http.errorToString(httpCode).c_str());
+  }
   http.end();
-  return type.equals("single") ? joke : setup + "  " + delivery;
+  return response;
 }
 
-// nextJoke 함수도 'category'를 인자로 받도록 수정
+// 3. 농담 로딩 및 화면 표시 (번역 먼저 실행!)
 void nextJoke(String category) {
+  tft.fillScreen(ILI9341_BLACK); tft.setCursor(0,0);
+  tft.println("Selected: " + category);
+//   tft.fillScreen(ILI9341_BLACK);
+//   tft.setCursor(0, 0);
   tft.setTextColor(ILI9341_WHITE);
-  tft.println("\nLoading joke...");
+  tft.println("Loading Joke...");
+  
+  // 3-1. 영어 농담 가져오기
+  currentCategory = category;
+  currentJoke = getJoke(category);
+  
+  tft.println("Translating...");
+  
+  // 3-2. [핵심] Make.com에 평점 0으로 먼저 보내서 번역 받아오기
+  currentKorean = sendToMake(currentCategory, currentJoke, 0);
 
-  String joke = getJoke(category); // 인자 전달
+  // 3-3. 화면에 영어 + 한글 같이 출력
+  tft.fillScreen(ILI9341_BLACK);
+  tft.setCursor(0, 0);
+  
+  // 영어 출력 (초록색)
   tft.setTextColor(ILI9341_GREEN);
-  tft.println(joke);
+  tft.println(currentJoke);
+  tft.println("");
+
+  // 한글 출력 (흰색) - Wokwi LCD에선 깨질 수 있으나 Serial엔 잘 나옴
+  tft.setTextColor(ILI9341_WHITE);
+  tft.println("Kor: " + currentKorean); 
+  Serial.println("\n[Korean Translation]: " + currentKorean); // 시리얼 모니터 확인용
+
+  // 3-4. 평점 요청 안내
+  tft.setTextColor(ILI9341_MAGENTA);
+  tft.println("\n--------------------");
+  tft.println("Rate this joke (1-5)");
+  
+  currentState = STATE_RATING; // 이제 사용자의 입력을 기다림
 }
 
-// 메뉴 화면 출력 함수
 void showMenu() {
-  currentState = STATE_MENU; // 상태를 메뉴로 설정
-
+  currentState = STATE_MENU;
   tft.fillScreen(ILI9341_BLACK);
   tft.setCursor(0, 0);
   tft.setTextColor(ILI9341_YELLOW);
   tft.setTextSize(2);
-  tft.println("\nSelect Category:");
-  tft.println("1:Misc 2:Prog");
-  tft.println("3:Dark 4:Pun");
-  tft.println("5:Spooky 6:X-mas");
-  tft.println("7:Any");
+  tft.println("\nSelect Category:\n1:Misc 2:Prog\n3:Dark 4:Pun\n5:Spooky 6:X-mas\n7:Any");
 }
 
-// 평가 완료 화면 함수
 void showRatingThankYou(char score) {
+  tft.fillScreen(ILI9341_BLACK);
+  tft.setCursor(0, 0);
   tft.setTextColor(ILI9341_CYAN);
   tft.setTextSize(2);
-  tft.print("\n\nRating: ");
-  tft.print(score);
-  tft.println("/5");
-  tft.println("Thank you!");
-
-  // [TODO] 여기서 서보 모터 웃는 시늉 함수 호출
-  // smileServoAction(score);
-  // [TODO] 여기서 부저 효과음 함수 호출
-  // playSound(score);
-
+  tft.printf("\nRating: %c/5\nSaved to Cloud!\n", score);
+  
   delay(2000); 
-  showMenu();  // 2초 보여주고 다시 메뉴로 돌아감
+  showMenu(); 
 }
 
-
 void setup() {
-
+  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password, 6);
-
-  tft.begin();
-  tft.setRotation(1);
-
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(2);
-  tft.print("Connecting to WiFi");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(100);
-    tft.print(".");
-  }
-
-  // IP 주소 출력 후 바로 메뉴 호출
-  tft.fillScreen(ILI9341_BLACK); // 화면 정리
-  tft.setCursor(0, 0);
-  tft.print("OK! IP=");
-  tft.println(WiFi.localIP());
-
-  delay(1000); // IP 주소 잠시 표시
   
-  showMenu(); // 메뉴 화면 호출
+  tft.begin(); tft.setRotation(1);
+  tft.setTextColor(ILI9341_WHITE); tft.setTextSize(2);
+  
+  while (WiFi.status() != WL_CONNECTED) { delay(100); tft.print("."); }
+  showMenu();
 }
 
 void loop() {
-  // 입력값 받기
   char key = keypad.getKey();
 
   if (key != NO_KEY) {
-
-    // ------------------------------------------------
-    // 상황 1: 메뉴 고르는 상태일 때 (STATE_MENU)
-    // ------------------------------------------------
+    // [메뉴 상태] 카테고리 선택 -> 농담 로드 -> 번역 -> 화면 표시
     if (currentState == STATE_MENU) {
-      String category = "";
+      String cat = "";
       switch (key) {
-        case '1': category = "Misc"; break;
-        case '2': category = "Programming"; break;
-        case '3': category = "Dark"; break;
-        case '4': category = "Pun"; break;
-        case '5': category = "Spooky"; break;
-        case '6': category = "Christmas"; break;
-        case '7': category = "Any"; break;
-        default: break; // 엉뚱한 키 무시
+        case '1': cat = "Misc"; break; case '2': cat = "Programming"; break;
+        case '3': cat = "Dark"; break; case '4': cat = "Pun"; break;
+        case '5': cat = "Spooky"; break; case '6': cat = "Christmas"; break;
+        case '7': cat = "Any"; break;
       }
-
-      if (category.length() > 0) {
-        tft.fillScreen(ILI9341_BLACK);
-        tft.setCursor(0, 0);
-        tft.setTextColor(ILI9341_YELLOW);
-        tft.setTextSize(2);
-        tft.println("Selected: " + category);
-
-        // 해당 카테고리로 새 농담 요청
-        nextJoke(category);
-
-        // 농담을 보여줬으니, 이제 상태를 '평가 대기'로 바꿈
-        currentState = STATE_RATING;
-
-        tft.setTextColor(ILI9341_MAGENTA);
-        tft.println("\nRate this joke (1-5)");
-        tft.println("or press '*' to skip");
+      if (cat.length() > 0) {
+        nextJoke(cat);
       }
-    }
-
-    // ------------------------------------------------
-    // 상황 2: 평가 기다리는 상태일 때 (STATE_RATING)
-    // ------------------------------------------------
+    } 
+    // [평점 상태] 내용을 다 보고 별점을 매김
     else if (currentState == STATE_RATING) {
       if (key >= '1' && key <= '5') {
-        // 1~5점 사이의 점수를 누름
+        int ratingInt = key - '0';
+        
+        // [핵심] 평점을 매기면 다시 Make.com에 전송 (진짜 저장용)
+        Serial.println("Sending Rating...");
+        sendToMake(currentCategory, currentJoke, ratingInt);
+        
         showRatingThankYou(key);
-        // [TODO] 여기서 MQTT로 점수를 보내거나 저장하는 코드 추가
       }
       else if (key == '*') {
-        // 평가 건너뛰기
-        showMenu();
+        showMenu(); // 스킵
       }
-      // 그 외의 키를 누르면 무시
     }
   }
-
-  delay(100); // 루프 안정화를 위한 짧은 딜레이
+  delay(10);
 }
