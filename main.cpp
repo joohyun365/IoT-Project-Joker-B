@@ -44,6 +44,22 @@ void beep(int f, int d, int p) { tone(BUZZER_PIN, f); delay(d); noTone(BUZZER_PI
 
 // 영어 농담 가져오기 (JokeAPI)
 String getJoke(String category) {
+     // String result = "";
+  // for (int i = 0; i < 5; i++) { 
+  //   HTTPClient http;
+  //   http.useHTTP10(true);
+  //   http.begin("https://v2.jokeapi.dev/joke/" + category);
+  //   int code = http.GET();
+  //   result = (code > 0) ? http.getString() : "Error";
+  //   http.end();
+  //   if (result != "Error") {
+  //     break; // 성공했으면 루프 탈출
+  //   }
+  //   else {
+  //     Serial.printf("Joke fetch failed (attempt %d): %s\n", i+1, result.c_str());
+  //     delay(500); // 잠시 대기 후 재시도
+  //   }
+  // }
   HTTPClient http;
   http.useHTTP10(true);
   http.begin("https://v2.jokeapi.dev/joke/" + category);
