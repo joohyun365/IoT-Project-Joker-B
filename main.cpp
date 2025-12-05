@@ -1,5 +1,5 @@
 /*
-  Joke Machine Final Version
+   Joke Machine Final Version
   Flow: Fetch Joke -> Send to Make(Get Translation) -> Show Both -> Wait for Rating -> Send Rating
 */
 
