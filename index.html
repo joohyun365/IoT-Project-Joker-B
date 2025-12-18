@@ -6,7 +6,7 @@
   <meta property="og:title" content="Joker: Knowledge to Sight"/>
   <meta property="og:description" content="Cloud-Offloaded IoT Architecture for Smart Content Delivery"/>
   <meta property="og:url" content="URL OF THE WEBSITE"/>
-  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image" content="static/image/your_banner_image.png"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 
@@ -85,7 +85,6 @@
   vertical-align: middle;
 }
 
-/* 让按钮间距更合理 */
 .publication-links .link-block {
   margin: 0 0.3rem;
 }
@@ -104,12 +103,12 @@
   </h1>
             <div class="is-size-5 publication-authors">
               <span class="author-block">
-                    <a href="https://github.com/leo3898" target="_blank">김태연</a><sup>1</sup>,
+                    <a href="https://github.com/joohyun365" target="_blank">김주현</a><sup>1</sup>,
                     <span class="author-block">
                       <a href="https://github.com/kjhu1211-cpu" target="_blank">강정후</a><sup>2</sup>,
                     </span>
                     <span class="author-block">
-                      <a href="https://github.com/joohyun365" target="_blank">김주현</a><sup>3</sup>
+                      <a href="https://github.com/leo3898" target="_blank">김태연</a><sup>3</sup>
                     </span>  </br>
                     <span class="author-block">
                       <a href="https://github.com/zubair1811"  target="_blank">Class Incharge: Muhammad Zubair Islam</a><sup>4</sup>,
@@ -201,16 +200,16 @@
          </h2>
         <div class="content has-text-justified">
             Overview of Joker (Core Features).<br><br>
-            <span style="color: #007bff;"><strong>(Category Selection)</strong></span>: Allows users to choose dynamic joke categories through 4x4 keypad input.
+            <span style="color: #007bff;"><strong>(Smart Retrieval & Translation)</strong></span>: Fetches random jokes via API and provides real-time Korean translations on display.
             <br>
-            <span style="color: #ff69b4;"><strong>(Cloud Translation)</strong></span>: Fetches Korean translations via Make.com API and provides a bilingual display interface.
+            <span style="color: #ff69b4;"><strong>(Interactive Rating & Feedback)</strong></span>: Allows users to rate jokes via keypad, triggering adaptive buzzer sounds based on the score.
             <br>
-            <span style="color: #32cd32;"><strong>(Smart Joke Retrieval)</strong></span>: Offloads heavy JSON parsing to a proxy server for efficient data handling.
+            <span style="color: #32cd32;"><strong>(Cloud Logging & Sorting)</strong></span>: Automatically saves joke content and ratings to Google Sheets and sorts them in descending order.
             <br>
-            <span style="color: burlywood;"><strong>(Interactive Logging)</strong></span>: Rates jokes based on user feedback and logs data to Google Sheets for analysis.
+            <span style="color: burlywood;"><strong>(Ranking System)</strong></span>: Retrieves and displays the 'Top 3' highest-rated jokes from the database in real-time.
 
           </p>
-          <img src="static/images/Overview.png" alt="Teaser GIF" height="100%">
+          <img src="static/images/final_diagram.png" alt="Teaser GIF" height="100%">
           <p class="subtitle has-text-centered">
         </div>
       </div>
@@ -227,33 +226,57 @@
          <h2 class="title is-3" style="background: linear-gradient(45deg, #f200b571, #eb419f8e, #0077ff5b, #2881cad7); color: white; padding: 10px; border-radius: 10px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); text-align: center;">
            Method & Engineering
          </h2>
-          
+         
+         <div style="display: flex; justify-content: center; align-items: center; gap: 100px; margin-bottom: 30px;">
+            <div style="width: 200px; text-align: center;">
+                <img src="static/images/Category Icon.png" alt="Category Icon" style="width: 100%;">
+            </div>
+            <div style="width: 200px; text-align: center;">
+                <img src="static/images/Translate Icon.png" alt="Translate Icon" style="width: 100%;">
+            </div>
+         </div>
+
           <div class="content has-text-justified">
-            <p>Our project focuses on a robust IoT architecture to ensure seamless network communication and efficient data processing. Key contributions include:</p>
+            <p>Our project utilizes a cloud-offloaded architecture to handle data processing, translation, and database management efficiently. My key role was to get different categories of jokes depending on the keypad input and getting the translation of the joke. These are the details of my work:</p>
 
             <h4 class="title is-4">1. Cloud-Offloaded Proxy Architecture</h4>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="static/images/workflow1.png" alt="Fetching Joke" style="max-width: 90%; height: auto; border-radius: 10px;">
+                <p class="is-size-5" style="font-weight: bold; color: #4a4a4a; margin-top: 10px;">Fetching Joke</p>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="static/images/workflow2.png" alt="Logging Rating" style="max-width: 90%; height: auto; border-radius: 10px;">
+                <p class="is-size-5" style="font-weight: bold; color: #4a4a4a; margin-top: 10px;">Logging Rating</p>
+            </div>
+            
             <p>
-              To overcome the ESP32's memory constraints, we engineered a <strong>Server-Side Proxy using Make.com</strong>.
-              Instead of parsing complex JSON data directly on the microcontroller, the proxy pre-processes the data and delivers only essential text strings to the device.
-              <br><em>*Architecture: ESP32 (Client) ↔ Make.com (Smart Proxy) ↔ Joke API & Google Sheets</em>
+              I implemented a <strong>Server-Side Proxy (Make.com)</strong> to handle heavy API requests. 
+              By doing this, I prevented memory overflow. This is how it works: 
+              </br> 1) I give the proxy a category 
+              </br>2) Proxy fetches jokes from the external API 
+              </br>3) Writes the jokes on Google Sheets 
+              </br>4) Translates them into Korean using built in Google Translate function 
+              </br>5) Returns optimized text data to the ESP32.
+            </p>
+            
+            <h4 class="title is-4">2. Logging Rating</h4>
+            <p>
+              I implemented the <strong>Rating Workflow</strong>. This is how it works:
+              </br>1) I give the proxy a joke and its rating from the device
+              </br>2) Proxy finds the Row of the joke on Google Sheets
+              </br>3) Proxy updates the row with  given rating
+              </br>4) Proxy returns Success Message to the device
+              <!-- 1) <strong>Write:</strong> The system logs every joke and its user rating to Google Sheets. 
+              2) <strong>Process:</strong> The sheet automatically sorts data by rating. 
+              3) <strong>Read:</strong> The device can fetch the "Top 3" jokes from the sheet to display the most popular content. -->
             </p>
 
-            <h4 class="title is-4">2. Cloud-Powered Bilingual Display</h4>
+            <h4 class="title is-4">3. Cloud-Powered Bilingual Display</h4>
             <p>
-              We implemented a <strong>Dual-Output Localization System</strong>. The proxy integrates Google Sheets translation services, enabling the device to display English text on the LCD while simultaneously streaming Korean translations to the Serial Monitor (or secondary display) with zero local memory overhead.
+              To support localization without local processing overhead, the translation logic is embedded in the proxy. The device receives and displays the original English joke on the lcd and displays the Korean translation on the terminal.
             </p>
-
-            <h4 class="title is-4">3. Robust Fault Tolerance</h4>
-            <p>
-              To guarantee system availability, we developed an <strong>Infinite Retry Logic</strong>. 
-              The system autonomously detects network timeouts or API failures (e.g., 'Error' response) and re-initiates connection attempts in a non-blocking loop until a valid response is secured.
-            </p>
-
-            <h4 class="title is-4">4. Dynamic Category & Feedback System</h4>
-            <ul>
-              <li><strong>Dynamic API Querying:</strong> Mapped physical keypad inputs to dynamic URL parameters for real-time category filtering.</li>
-              <li><strong>Cloud Logger:</strong> Automated data logging pipeline that sends user ratings directly to Google Sheets for usage analysis.</li>
-            </ul>
           </div>
 
           <div style="text-align: center; margin-top: 20px;">
@@ -272,8 +295,7 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code> Comming Soon...
-</code></pre>
+    <pre><code> Sora2, Banana Pro, Make.com, Google Sheets API, ESP32</code></pre>
   </div>
 </section>
 
@@ -298,4 +320,4 @@
 </footer>
 
 </body>
-  </html>
+</html>
