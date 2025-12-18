@@ -31,6 +31,7 @@ byte rowPins[ROWS] = {27, 26, 25, 33}; byte colPins[COLS] = {32, 17, 16, 22};
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
 const int BUZZER_PIN = 14; 
+#define BUZZER_CHANNEL 0 // 이거 추가함
 enum MachineState { STATE_MENU, STATE_RATING };
 MachineState currentState = STATE_MENU; 
 
@@ -38,6 +39,46 @@ String currentJoke = "";
 String currentCategory = "";
 
 void beep(int f, int d, int p) { tone(BUZZER_PIN, f); delay(d); noTone(BUZZER_PIN); delay(p); }
+
+int normalizeScore(char scoreChar) {
+  int s = scoreChar - '0';
+  if (s < 1) s = 1;
+  if (s > 5) s = 5;
+  return s;
+}
+
+void buzzerLaugh(char scoreChar) {
+  int score = normalizeScore(scoreChar);
+
+  switch (score) {
+    case 1:
+      beep(700, 120, 200);
+      break;
+
+    case 2:
+      beep(800, 120, 150);
+      beep(800, 120, 150);
+      break;
+
+    case 3:
+      for (int i = 0; i < 3; i++) beep(1000, 120, 100);
+      break;
+
+    case 4:
+      beep(900, 120, 80);
+      beep(1100, 120, 80);
+      beep(1300, 120, 80);
+      beep(1500, 150, 120);
+      break;
+
+    case 5:
+      for (int i = 0; i < 6; i++) {
+        beep(1600, 100, 60);
+        beep(1800, 200, 120);
+      }
+      break;
+  }
+}
 
 // --- Network Functions ---
 
@@ -184,7 +225,8 @@ void showRatingThankYou(char score) {
   tft.setTextColor(ILI9341_CYAN);
   tft.setTextSize(2);
   tft.printf("\n\nRating: %d/5\nSaving Log...\n", ratingInt);
-  
+  buzzerLaugh(score);
+
   bool isSent = sendLogToMake(currentCategory, currentJoke, ratingInt);
   
   while (!isSent) {
@@ -206,7 +248,10 @@ void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password, 6);
-  
+
+  ledcSetup(BUZZER_CHANNEL, 2000, 8);
+  ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL); // 얘네 추가함
+
   tft.begin(); tft.setRotation(1);
   tft.setTextColor(ILI9341_WHITE); tft.setTextSize(2);
   tft.print("Connecting WiFi");
