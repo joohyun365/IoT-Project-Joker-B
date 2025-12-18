@@ -28,37 +28,12 @@
       "attrs": {}
     },
     {
-      "type": "wokwi-photoresistor-sensor",
-      "id": "ldr1",
-      "top": 496.1,
-      "left": -293.3,
-      "rotate": 270,
-      "attrs": {}
-    },
-    { "type": "wokwi-servo", "id": "servo1", "top": -2, "left": 384, "attrs": {} },
-    {
-      "type": "wokwi-servo",
-      "id": "servo2",
-      "top": 16.4,
-      "left": -563.6,
-      "rotate": 180,
-      "attrs": {}
-    },
-    {
       "type": "wokwi-buzzer",
       "id": "bz1",
       "top": 110.7,
       "left": -453.9,
       "rotate": 270,
       "attrs": { "volume": "0.1" }
-    },
-    {
-      "type": "wokwi-mpu6050",
-      "id": "imu1",
-      "top": -36.02,
-      "left": -93.92,
-      "rotate": 180,
-      "attrs": {}
     }
   ],
   "connections": [
@@ -74,34 +49,19 @@
     [ "esp:5V", "bb1:tp.25", "red", [ "h-43.05", "v-76.8", "h-102.4" ] ],
     [ "bb1:tn.25", "esp:GND.2", "black", [ "h40", "v-139.3", "h201.6" ] ],
     [ "lcd1:GND", "bb1:tn.23", "black", [ "h-19.7", "v-76.8", "h-337.1" ] ],
-    [ "esp:3V3", "ldr1:VCC", "green", [ "h0" ] ],
-    [ "keypad1:R1", "esp:27", "#8f4814", [ "v-76.8", "h-182.4", "v-96" ] ],
     [ "keypad1:R3", "esp:25", "#8f4814", [ "v-67.2", "h-172.5", "v-124.8" ] ],
     [ "keypad1:R4", "esp:33", "#8f4814", [ "v-62.4", "h-167.8", "v-139.2" ] ],
     [ "keypad1:C1", "esp:32", "orange", [ "v-57.6", "h-163.1", "v-153.6" ] ],
     [ "keypad1:C2", "esp:17", "orange", [ "v0" ] ],
     [ "keypad1:R2", "esp:26", "#8f4814", [ "v-72", "h-177.2", "v-110.4" ] ],
     [ "keypad1:C3", "esp:16", "orange", [ "v0" ] ],
-    [ "ldr1:GND", "bb1:tn.22", "black", [ "v-201.6", "h-86.8" ] ],
-    [ "esp:13", "servo1:SIG", "blue", [ "h0" ] ],
-    [ "esp:12", "servo2:SIG", "blue", [ "h0" ] ],
     [ "esp:14", "bz1:+", "green", [ "h0" ] ],
     [ "bb1:tn.23", "bz1:-", "black", [ "v-24" ] ],
-    [ "esp:21", "imu1:SDA", "green", [ "h0" ] ],
-    [ "esp:22", "imu1:SCL", "orange", [ "h0" ] ],
-    [ "esp:3V3", "imu1:VCC", "red", [ "h0" ] ],
-    [ "esp:GND.1", "imu1:GND", "black", [ "h0" ] ],
-    [ "servo2:V+", "bb1:tp.22", "red", [ "h0" ] ],
-    [ "servo1:PWM", "esp:12", "blue", [ "h-542.4", "v173" ] ],
-    [ "servo1:V+", "bb1:tp.21", "red", [ "h0" ] ],
-    [ "servo1:GND", "bb1:tn.20", "black", [ "h0" ] ],
-    [ "servo2:GND", "bb1:tn.16", "black", [ "h0" ] ],
-    [ "servo2:PWM", "esp:13", "blue", [ "h230.4", "v182.2" ] ],
     [ "bz1:1", "bb1:tn.17", "black", [ "h0" ] ],
-    [ "bz1:2", "esp:14", "cyan", [ "h196.8", "v77.2" ] ],
-    [ "keypad1:C4", "esp:0", "orange", [ "v0" ] ],
-    [ "lcd1:LED", "esp:5", "limegreen", [ "h0" ] ],
-    [ "ldr1:AO", "esp:34", "violet", [ "v0" ] ]
+    [ "lcd1:LED", "bb1:tp.19", "red", [ "h-9.6", "v-139.21", "h-393.6", "v158.4" ] ],
+    [ "keypad1:C4", "esp:22", "orange", [ "v0" ] ],
+    [ "bz1:2", "esp:14", "cyan", [ "h192", "v77.2" ] ],
+    [ "keypad1:R1", "esp:27", "#8f4814", [ "v-76.8", "h-182.4", "v-96" ] ]
   ],
   "dependencies": {}
 }
