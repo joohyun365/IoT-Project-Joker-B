@@ -61,6 +61,3 @@ We initially implemented an auto-brightness feature using an LDR sensor and PWM 
 3.  **Decision:** To prioritize network stability and seamless UI demonstration, the LDR feature was deprecated in the simulation code (though the logic remains valid for physical hardware).
 
 > *This decision was made to ensure the stability of the core network features during the presentation.*
-
-| **김태연** | **Software ~**| • Implemented Keypad State Machine<br>• Developed Ranking System |
-
