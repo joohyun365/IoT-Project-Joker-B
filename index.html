@@ -2,25 +2,20 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
-  <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
-  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
-  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
+  <meta name="description" content="Joker: IoT-based Smart Joke Machine with Cloud-Offloaded Architecture">
+  <meta property="og:title" content="Joker: Knowledge to Sight"/>
+  <meta property="og:description" content="Cloud-Offloaded IoT Architecture for Smart Content Delivery"/>
   <meta property="og:url" content="URL OF THE WEBSITE"/>
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
   <meta property="og:image" content="static/image/your_banner_image.png" />
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 
-<!-- check -->
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:title" content="Joker: IoT Smart Device">
+  <meta name="twitter:description" content="IoT-based Smart Joke Machine with Cloud-Offloaded Architecture">
   <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
   <meta name="twitter:card" content="summary_large_image">
-  <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  
+  <meta name="keywords" content="IoT, ESP32, Make.com, Cloud Proxy, Embedded System">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
@@ -43,7 +38,7 @@
   <script src="static/js/bulma-slider.min.js"></script>
   <script src="static/js/index.js"></script>
   <meta charset="UTF-8">
-  <title>Knowledge to Sight: Reasoning over Visual Attributes via Knowledge Decomposition for Abnormality Grounding</title>
+  <title>Joker: Cloud-Offloaded Smart IoT Device</title>
   <style>
     .publication-title {
       font-size: 3rem;
@@ -108,7 +103,6 @@
     <span class="title-text">Joker </span>
   </h1>
             <div class="is-size-5 publication-authors">
-              <!-- Paper authors -->
               <span class="author-block">
                     <a href="https://github.com/leo3898" target="_blank">김태연</a><sup>1</sup>,
                     <span class="author-block">
@@ -140,7 +134,6 @@
             <div class="column has-text-centered">
                 <div class="publication-links">
 
-                    <!-- Project Slides -->
                     <span class="link-block">
                         <a href="https://github.com/joohyun365" target="_blank"
                            class="external-link button is-normal is-rounded is-dark">
@@ -152,7 +145,6 @@
                     </span>
             
 
-                    <!-- Github link -->
                     <span class="link-block">
                         <a href="https://github.com/joohyun365/IoT-Project-Joker.git" target="_blank"
                            class="external-link button is-normal is-rounded is-dark">
@@ -188,7 +180,6 @@
           </div>
           <div style="border: none; border-radius: 15px; box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); overflow: hidden; background: linear-gradient(45deg, #0575e6, #7928ca81); padding: 10px;">
             <video poster="" id="tree" autoplay controls muted loop height="100%" style="display: block; width: 100%; border-radius: 15px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);">
-              <!-- Your video here -->
               <source src="static/videos/IoT-Joker_Presentaion.mp4" type="video/mp4">
             </video>
           </div>
@@ -200,7 +191,6 @@
 
 
 
-<!-- Paper abstract -->
 <section class="section hero is-small">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
@@ -210,13 +200,14 @@
            Overview
          </h2>
         <div class="content has-text-justified">
-            Overview of Joker.
-            <strong>(Joke Rating)</strong>: Rates Jokes based on user feedback for continuous improvement via a keypad
-            <span style="color: #ff69b4;">(Laughing Motion):</span> Visiualizes joke reactions with servo motor-driven movements
-            <span style="color: #007bff;">(Category Selection)</span>, Allows users to choose joke categories through buttons
-            <span style="color: #32cd32;">(Brightness Control)</span>: Adjusts screen brightness based on ambient light using a photoresistor
-            <span style="color: aquamarine;">(New Joke Request)</span>: Enables users to request new jokes by shaking or tapping the device
-            <span style="color: burlywood;">(Korean Translation)</span>: Provides Korean translations for jokes using display
+            Overview of Joker (Core Features).<br><br>
+            <span style="color: #007bff;"><strong>(Category Selection)</strong></span>: Allows users to choose dynamic joke categories through 4x4 keypad input.
+            <br>
+            <span style="color: #ff69b4;"><strong>(Cloud Translation)</strong></span>: Fetches Korean translations via Make.com API and provides a bilingual display interface.
+            <br>
+            <span style="color: #32cd32;"><strong>(Smart Joke Retrieval)</strong></span>: Offloads heavy JSON parsing to a proxy server for efficient data handling.
+            <br>
+            <span style="color: burlywood;"><strong>(Interactive Logging)</strong></span>: Rates jokes based on user feedback and logs data to Google Sheets for analysis.
 
           </p>
           <img src="static/images/Overview.png" alt="Teaser GIF" height="100%">
@@ -228,38 +219,48 @@
   </div>
 </section>
 
-<!-- End paper abstract -->
-
-<!-- Teaser video-->
-
-
 <section class="section hero is-small">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full">
         <div class="content">
          <h2 class="title is-3" style="background: linear-gradient(45deg, #f200b571, #eb419f8e, #0077ff5b, #2881cad7); color: white; padding: 10px; border-radius: 10px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); text-align: center;">
-           Method
+           Method & Engineering
          </h2>
-          <div class="content has-text-justified" style="font-size: 4.5 rem;"></div>
-          <strong>Overview of Joker.</strong>
-          <br><strong>Joke Rating</strong> Rate the joke with the keypad for continuous improvement
-          <br><strong>Laughing Motion</strong> Move the servo motor to visualize the reaction to the joke and implement laughing sound with buzzer
-          <br><strong>Category Selection</strong> Change the category of jokes through the keypad
-          <br><strong>Brightness Control</strong> Using a photoresistor, sense the surrounding brightness and adjust the brightness of the LCD screen and adjust screen brightness
-          <br><strong>New Joke Request</strong> Request a new joke by shaking or tapping the device
-          <br><strong>Korean Translation</strong> Fetch Korean translation from an API and display it on the screen
+          
+          <div class="content has-text-justified">
+            <p>Our project focuses on a robust IoT architecture to ensure seamless network communication and efficient data processing. Key contributions include:</p>
+
+            <h4 class="title is-4">1. Cloud-Offloaded Proxy Architecture</h4>
+            <p>
+              To overcome the ESP32's memory constraints, we engineered a <strong>Server-Side Proxy using Make.com</strong>.
+              Instead of parsing complex JSON data directly on the microcontroller, the proxy pre-processes the data and delivers only essential text strings to the device.
+              <br><em>*Architecture: ESP32 (Client) ↔ Make.com (Smart Proxy) ↔ Joke API & Google Sheets</em>
+            </p>
+
+            <h4 class="title is-4">2. Cloud-Powered Bilingual Display</h4>
+            <p>
+              We implemented a <strong>Dual-Output Localization System</strong>. The proxy integrates Google Sheets translation services, enabling the device to display English text on the LCD while simultaneously streaming Korean translations to the Serial Monitor (or secondary display) with zero local memory overhead.
+            </p>
+
+            <h4 class="title is-4">3. Robust Fault Tolerance</h4>
+            <p>
+              To guarantee system availability, we developed an <strong>Infinite Retry Logic</strong>. 
+              The system autonomously detects network timeouts or API failures (e.g., 'Error' response) and re-initiates connection attempts in a non-blocking loop until a valid response is secured.
+            </p>
+
+            <h4 class="title is-4">4. Dynamic Category & Feedback System</h4>
+            <ul>
+              <li><strong>Dynamic API Querying:</strong> Mapped physical keypad inputs to dynamic URL parameters for real-time category filtering.</li>
+              <li><strong>Cloud Logger:</strong> Automated data logging pipeline that sends user ratings directly to Google Sheets for usage analysis.</li>
+            </ul>
           </div>
-          </p>
-          </p>
-          <div style="text-align: center;">
-          <img src="static/images/Sensors and Tools.png" alt="MY ALT TEXT" style="display: block; width: 100%; border-radius: 15px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);">
+
+          <div style="text-align: center; margin-top: 20px;">
+          <img src="static/images/Sensors and Tools.png" alt="System Architecture and Tools" style="display: block; width: 100%; border-radius: 15px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);">
           </div>
       
-      </p>
-      <div style="text-align: center;">
-      </p>
-      </div>   
+      </div> 
       </div>
     </div>
   </div>
@@ -268,7 +269,6 @@
 
 
 
-<!--End BibTex citation -->
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
@@ -286,7 +286,7 @@
         <div class="content">
 
           <p>
-            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
             You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
             Commons Attribution-ShareAlike 4.0 International License</a>.
           </p>
@@ -297,11 +297,5 @@
   </div>
 </footer>
 
-<!-- Statcounter tracking code -->
-  
-<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
-
-    <!-- End of Statcounter Code -->
-
-  </body>
+</body>
   </html>
