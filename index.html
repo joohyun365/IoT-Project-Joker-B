@@ -272,7 +272,25 @@
             <p>
               To support localization without local processing overhead, the translation logic is embedded in the proxy. The device receives and displays the original English joke on the lcd and displays the Korean translation on the Serial monitor.
             </p>
-            <h4 class="title is-4" style="margin-top: 30px;">4. Fault Tolerance: Infinite Retry Logic</h4>
+            <h4 class="title is-4" style="margin-top: 30px;">4. Firmware Logic: Finite State Machine (FSM)</h4>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="static/images/loop_code.png" alt="Keypad Loop Logic" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #ddd;">
+                <p class="is-size-6" style="color: #666; margin-top: 5px;">Figure: Main Loop implementing State Machine logic</p>
+            </div>
+
+            <div class="content has-text-justified">
+              <p>
+                To manage user interactions efficiently without blocking the system, I implemented a <strong>Finite State Machine (FSM)</strong> within the main loop.
+              </p>
+              <ul>
+                <li><strong>State Management:</strong> The system utilizes a <code>currentState</code> variable to switch between <code>STATE_MENU</code> (waiting for category selection) and <code>STATE_RATING</code> (waiting for user feedback).</li>
+                <li><strong>Category Mapping:</strong> Using a <code>switch-case</code> structure, physical keys '1' through '7' are mapped to specific API query parameters (e.g., 'Programming', 'Dark').</li>
+                <li><strong>Structured Flow:</strong> The rating input is only activated <em>after</em> a joke is displayed, preventing invalid inputs and ensuring a smooth user experience.</li>
+              </ul>
+            </div>
+            
+            <h4 class="title is-4" style="margin-top: 30px;">5. Fault Tolerance: Infinite Retry Logic</h4>
             
             <div style="text-align: center; margin: 20px 0;">
                 <img src="static/images/error_code.png" alt="Infinite Retry Logic Code" style="max-width: 90%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
@@ -293,7 +311,7 @@
               </p>
             </div>
 
-            <h4 class="title is-4" style="margin-top: 30px;">5. Engineering Challenge: Resource Optimization</h4>
+            <h4 class="title is-4" style="margin-top: 30px;">6. Engineering Challenge: Resource Optimization</h4>
             
             <div style="text-align: center; margin: 20px 0;">
                 <img src="static/images/LDR_Image.png" alt="LDR Optimization Challenge" style="max-width: 90%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
@@ -373,3 +391,4 @@
 </body>
 
 </html>
+
